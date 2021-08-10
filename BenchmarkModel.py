@@ -1,7 +1,7 @@
 import os
 import datetime
 
-import tensorflow.lite as lite
+import tflite_runtime.interpreter as lite
 
 import Settings
 import pathlib
@@ -42,7 +42,7 @@ class BenchmarkModel:
                     tflite_model_file = tflite_models_dir/(self.model_name+"model_quant_32.tflite")
                 elif bit_width == 16:
                     tflite_model_file = tflite_models_dir/(self.model_name+"model_quant_16.tflite")
-                interpreter = lite.Interpreter(model_path=str(tflite_model_file))
+                interpreter = lite.Interpreter(model_path=str(tflite_model_file, experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')]))
 
                 self.get_metrics_quantized(input_dim, test_images_preprocessed, test_images, bit_width, interpreter)
 
