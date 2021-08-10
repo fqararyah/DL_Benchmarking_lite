@@ -1,0 +1,9 @@
+networks_file: networks.txt
+batch_sizes_file: batch_sizes.txt
+input_dims_file: input_dims.txt
+delimiter: ::
+end_of_file: EOF
+global_setting_keyword: global
+metrics_file: metrics
+precisions_file: precisions.txt
+tflite_folder: tflite_models
