@@ -1,13 +1,13 @@
 import os
 import datetime
 
-import tflite_runtime.interpreter as lite
+import tflite_runtime.interpreter as tflite
 
 import Settings
 import pathlib
 
 import numpy as np
-from tensorflow.keras import datasets
+#from tensorflow.keras import datasets
 import time
 
 import ssl
@@ -31,10 +31,12 @@ class BenchmarkModel:
         self.bit_widths = bit_widths
 
     def get_metrics(self):
-        load_images()
-        test_images_preprocessed = test_images / 255.0
-        test_images_preprocessed = test_images_preprocessed[0:max(self.batch_sizes) * 10]
+        #load_images()
         for input_dim in self.inputs_dims:
+            test_images = np.random.randint(low =0, high= 256, size = [1000, input_dim[0], input_dim[1],\
+                 3], dtype=np.uint8)
+            test_images_preprocessed = test_images / 255.0
+            test_images_preprocessed = test_images_preprocessed[0:max(self.batch_sizes) * 10]
             for bit_width in self.bit_widths:
                 tflite_models_dir = pathlib.Path(Settings.Settings().tflite_folder)
                 tflite_models_dir.mkdir(exist_ok=True, parents=True)
@@ -42,7 +44,7 @@ class BenchmarkModel:
                     tflite_model_file = tflite_models_dir/(self.model_name+"model_quant_32.tflite")
                 elif bit_width == 16:
                     tflite_model_file = tflite_models_dir/(self.model_name+"model_quant_16.tflite")
-                interpreter = lite.Interpreter(model_path=str(tflite_model_file, experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')]))
+                interpreter = tflite.Interpreter(model_path=str(tflite_model_file), experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
 
                 self.get_metrics_quantized(input_dim, test_images_preprocessed, test_images, bit_width, interpreter)
 
