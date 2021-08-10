@@ -1,15 +1,12 @@
 import os
 import datetime
-from tensorflow.python.keras.engine import training
 
-from tensorflow.python.ops.gen_math_ops import arg_max
+import tensorflow.lite as lite
+
 import Settings
-from tensorflow.python.keras import utils
 import pathlib
 
 import numpy as np
-import tensorflow as tf
-import tensorflow.keras.backend as K
 from tensorflow.keras import datasets
 import time
 
@@ -38,41 +35,14 @@ class BenchmarkModel:
         test_images_preprocessed = test_images / 255.0
         test_images_preprocessed = test_images_preprocessed[0:max(self.batch_sizes) * 10]
         for input_dim in self.inputs_dims:
-            if self.model_name == '' or self.model_name == Settings.Settings().end_of_file:
-                break
-            
-            self.pretrained_model = getattr(tf.keras.applications, \
-            self.model_name)(input_shape=(input_dim[0], input_dim[1], 3), weights=None, classes=10)
-            self.pretrained_model.compile(optimizer='adam',
-                        loss=tf.keras.losses.SparseCategoricalCrossentropy(
-                            from_logits=True),
-                        metrics=['accuracy'])
             for bit_width in self.bit_widths:
-                #if bit_width == 32:
-                #    self.get_metrics_32(input_dim, test_images_preprocessed, test_images)
-                #else:
-                    #currently only 16 bit float is supported
-                converter = tf.lite.TFLiteConverter.from_keras_model(self.pretrained_model)
-                tflite_model = converter.convert()
-                
-                if bit_width == 32:
-                    converter.target_spec.supported_types = [tf.float32]
-                    print(32)
-                elif bit_width == 16:
-                    converter.optimizations = [tf.lite.Optimize.DEFAULT]
-                    converter.target_spec.supported_types = [tf.float16]
-                    print(16)
-                else:
-                    break
-                tflite_quantized_model = converter.convert()
                 tflite_models_dir = pathlib.Path(Settings.Settings().tflite_folder)
                 tflite_models_dir.mkdir(exist_ok=True, parents=True)
                 if bit_width == 32:
                     tflite_model_file = tflite_models_dir/(self.model_name+"model_quant_32.tflite")
                 elif bit_width == 16:
                     tflite_model_file = tflite_models_dir/(self.model_name+"model_quant_16.tflite")
-                tflite_model_file.write_bytes(tflite_quantized_model)
-                interpreter = tf.lite.Interpreter(model_path=str(tflite_model_file))
+                interpreter = lite.Interpreter(model_path=str(tflite_model_file))
 
                 self.get_metrics_quantized(input_dim, test_images_preprocessed, test_images, bit_width, interpreter)
 
@@ -139,7 +109,7 @@ class BenchmarkModel:
                     t1 = time.time()
                     interpreter.invoke()
                     predictions = interpreter.get_tensor(output_index)
-                    predicted = arg_max(predictions, 0)
+                    predicted = np.argmax(predictions, 0)
                     if len(predicted) > 0 and counter > 0:
                         avg_time += time.time() - t1
                         avg_latency += time.time() - t0
