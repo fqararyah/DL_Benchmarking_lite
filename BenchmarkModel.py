@@ -33,7 +33,7 @@ class BenchmarkModel:
     def get_metrics(self):
         #load_images()
         for input_dim in self.inputs_dims:
-            test_images = np.random.randint(low =0, high= 256, size = [1000, input_dim[0], input_dim[1],\
+            test_images = np.random.randint(low =0, high= 256, size = [320, input_dim[0], input_dim[1],\
                  3], dtype=np.uint8)
             test_images_preprocessed = test_images / 255.0
             test_images_preprocessed = test_images_preprocessed[0:max(self.batch_sizes) * 10]
