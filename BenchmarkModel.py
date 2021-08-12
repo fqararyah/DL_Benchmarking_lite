@@ -100,7 +100,7 @@ class BenchmarkModel:
                 avg_time = 0
                 #avg_time_with_preprocessing = 0.0
                 counter = 0
-                interpreter.resize_tensor_input(0,[batch_size, 32, 32, 3])
+                interpreter.resize_tensor_input(0,[batch_size, input_dim[0], input_dim[1], 3])
                 interpreter.allocate_tensors()
                 while counter * batch_size < max(self.batch_sizes) * 10:
                     image_batch = test_images[counter * batch_size: (counter + 1) * batch_size]
