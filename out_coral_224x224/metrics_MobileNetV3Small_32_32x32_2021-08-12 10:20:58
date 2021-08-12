@@ -1,0 +1,36 @@
+
+----------------
+batch size: 1
+----------------
+Execution time is: 0.006808325041050447 seconds.
+Latency is: 0.00694100236444264 seconds.
+
+----------------
+batch size: 2
+----------------
+Execution time is: 0.00661628672321762 seconds.
+Latency is: 0.006704226556616517 seconds.
+
+----------------
+batch size: 4
+----------------
+Execution time is: 0.003916712016521203 seconds.
+Latency is: 0.003982524513077213 seconds.
+
+----------------
+batch size: 8
+----------------
+Execution time is: 0.0025354246360754893 seconds.
+Latency is: 0.0025892997610157936 seconds.
+
+----------------
+batch size: 16
+----------------
+Execution time is: 0.0020593565459535415 seconds.
+Latency is: 0.0021075634373392805 seconds.
+
+----------------
+batch size: 32
+----------------
+Execution time is: 0.0018055117616085424 seconds.
+Latency is: 0.001849494384000294 seconds.
